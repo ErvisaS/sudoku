@@ -47,7 +47,36 @@ class App:
     def drawNumbers(self,window):
         for yidx, row in enumerate(self.grid):
             for xidx,num in enumerate(row):
-                if num != "0":
+                if yidx<=8 and xidx<=8:
+                  if num != "*":
+                    pos =[(xidx*cellSize)+gridPos[0],(yidx*cellSize)+gridPos[1]]
+                    self.textToScreen(window,str(num),pos)
+                if  xidx>=9  and yidx>=6 and yidx<=8:
+                  if num != "*":
+                    pos =[(xidx*cellSize)+gridPos[0],(yidx*cellSize)+gridPos[1]]
+                    self.textToScreen(window,str(num),pos)
+                if  xidx>=9 and xidx<=11 and yidx>=12 and yidx<=14:
+                  if num != "*":
+                    pos =[(xidx*cellSize)+gridPos[0],(yidx*cellSize)+gridPos[1]]
+                    self.textToScreen(window,str(num),pos)
+                if yidx>=9 and yidx<=11 and xidx<=8:
+                  if num != "*":
+                    pos =[(xidx*cellSize)+gridPos[0]+180,(yidx*cellSize)+gridPos[1]]
+                    self.textToScreen(window,str(num),pos)
+                if yidx<=5 and xidx>8:
+                  if num != "*":
+                    pos =[(xidx*cellSize)+gridPos[0]+90,(yidx*cellSize)+gridPos[1]]
+                    self.textToScreen(window,str(num),pos)
+                if yidx>=12 and yidx<=14 and xidx>11:
+                  if num != "*":
+                    pos =[(xidx*cellSize)+gridPos[0],(yidx*cellSize)+gridPos[1]]
+                    self.textToScreen(window,str(num),pos)
+                if yidx>14 and xidx>8:
+                  if num != "*":
+                    pos =[(xidx*cellSize)+gridPos[0]+90,(yidx*cellSize)+gridPos[1]]
+                    self.textToScreen(window,str(num),pos)
+                if yidx>=12 and xidx<=8:
+                  if num != "*":
                     pos =[(xidx*cellSize)+gridPos[0],(yidx*cellSize)+gridPos[1]]
                     self.textToScreen(window,str(num),pos)
     def drawSelection(self,window,pos):
