@@ -19,6 +19,7 @@ class App:
             self.events()
             self.update()
             self.draw()
+          
         pygame.quit()
         SystemExit()
 
@@ -29,6 +30,7 @@ class App:
             if event.type== pygame.MOUSEBUTTONDOWN:
                selected  = self.mouseOnGrid()
                if selected: 
+                 print(self.mouseOnGrid())
                  self.selected=selected
                else:
                    print("not on board")
@@ -125,3 +127,101 @@ class App:
         pos[1] += (cellSize-fontHeight)//2
         window.blit(font, pos)
 
+    def checkNumber(x, y, n):
+        global board
+      #up-left sudoku
+        if(x<9 and y<9):
+          for i in range(0, 9):
+              print(board[y][i])
+              if board[y][i] == n:
+                return False
+     
+          for i in range(0, 9):
+         
+            print(board[i][x])
+            if board[i][x] == n:
+                return False
+          
+          x0 = (x//3)*3
+          y0 = (y//3)*3
+     
+          for i in range(0, 3):
+            for j in range(0, 3):
+              #  print(board[y0+i][x0+j])
+                if board[y0+i][x0+j] == n:
+                    return False
+          return True 
+        # up-right sudoku
+        if(x>8 and y<9):
+          if y>6:
+            for i in range(12, 21):
+              if board[y][i] == n:
+                return False
+          else: 
+             for i in range(9, 18):
+              if board[y][i] == n:
+                return False
+          for i in range(0, 6):
+            print(board[i][x])
+            if (board[i][x] or board[6][x+3]or board[7][x+3] or board[8][x+3])   == n:
+                return False
+          
+          x0 = (x//3)*3
+          y0 = (y//3)*3
+     
+          for i in range(0, 3):
+            for j in range(0, 3):
+              #  print(board[y0+i][x0+j])
+                if board[y0+i][x0+j] == n:
+                    return False
+          return True 
+        #down-right sudoku  
+        if(x>8 and y>11):
+          if y<15:
+            for i in range(12, 21):
+              print(board[y][i])
+              if board[y][i] == n:
+                return False
+          else:
+            for i in range(9, 18):
+              print(board[y][i])
+              if board[y][i] == n:
+                return False
+          for i in range(15, 21):
+         
+            print(board[i][x])
+            if (board[i][x] or board[12][x+3]or board[13][x+3] or board[14][x+3])   == n:
+                return False
+          
+          x0 = (x//3)*3
+          y0 = (y//3)*3
+     
+          for i in range(0, 3):
+            for j in range(0, 3):
+              #  print(board[y0+i][x0+j])
+                if board[y0+i][x0+j] == n:
+                    return False
+          return True 
+        #down-left sudoku
+        if(x<9 and y>11):
+          for i in range(0, 9):
+              print(board[y][i])
+              if board[y][i] == n:
+                return False
+     
+          for i in range(12, 21):
+         
+            print(board[i][x])
+            if board[i][x] == n:
+                return False
+          
+          x0 = (x//3)*3
+          y0 = (y//3)*3
+     
+          for i in range(0,3):
+            for j in range(0, 3):
+              #  print(board[y0+i][x0+j])
+                if board[y0+i][x0+j] == n:
+                    return False
+          return True 
+    print(checkNumber(0, 12,str(6)))
