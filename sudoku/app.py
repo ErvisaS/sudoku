@@ -331,5 +331,63 @@ class App:
                 if board[y0+i][x0+j] == n:
                     return False
            return True 
-      
-    print(checkNumber(12,12,str(9)))
+     #up-middle 3*3 square
+        if(x>8 and x<12) and (y>5 and y<9):
+            for i in range(6, 15):
+              print(board[y][i])
+              if board[y][i] == n:
+                return False
+     
+            for i in range(9, 12):
+             print(board[i][x])
+             if board[i][x-3] or board[12][x] or board[13][x] or board[14][x] == n:
+                return False
+          
+            x0 = (x//3)*3
+            y0 = (y//3)*3
+            for i in range(0, 3):
+             for j in range(0, 3):
+              #  print(board[y0+i][x0+j])
+                if board[y0+i][x0+j] == n:
+                    return False
+            return True 
+      #down-middle 3*3 square
+        if(x>8 and x<12) and (y>5 and y<9):
+            for i in range(6, 15):
+              print(board[y][i])
+              if board[y][i] == n:
+                return False
+     
+            for i in range(9, 12):
+             print(board[i][x])
+             if board[i][x-3] or board[12][x] or board[13][x] or board[14][x] == n:
+                return False
+          
+            x0 = (x//3)*3
+            y0 = (y//3)*3
+            for i in range(0, 3):
+             for j in range(0, 3):
+                if board[y0+i][x0+j] == n:
+                    return False
+            return True 
+      #middle 6*3 
+        if(x<9 and y>8 and y<12):
+            for i in range(0, 9):
+              print(board[y][i])
+              if board[y][i] == n:
+                return False
+     
+            for i in range(6, 9):
+             print(board[i][x])
+             if board[i][x+6] or board[12][x] or board[13][x] or board[14][x] == n:
+                return False
+          
+            x0 = (x//3)*3
+            y0 = (y//3)*3
+            for i in range(0, 3):
+             for j in range(0, 3):
+              #  print(board[y0+i][x0+j])
+                if board[y0+i][x0+j] == n:
+                    return False
+            return True 
+    print(checkNumber(8,10,str(8)))
