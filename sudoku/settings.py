@@ -9,7 +9,7 @@ p=1
 while p:
 
     try:
-            f = open(r"C:\Users\Ervisa\Desktop\sud1.txt", 'r')
+            f = open(r"C:\Users\Ervisa\Desktop\sudoku\sudoku\sud1.txt", 'r')
             p = 0
     except FileNotFoundError:
             print("File not found. (Example test cases can be found under "

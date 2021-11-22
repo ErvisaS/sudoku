@@ -140,7 +140,7 @@ class App:
      
            for i in range(0, 9):
              print(board[i][x])
-             if (board[i][x] or board[9][x-6] or board[10][x-6] or board[11][x-6] or board[12][x] or board[13][x] or board[14][x])== n:
+             if board[i][x] or board[9][x-6] or board[10][x-6] or board[11][x-6] or board[12][x] or board[13][x] or board[14][x]== n:
                 return False
           
            x0 = (x//3)*3
@@ -174,12 +174,12 @@ class App:
            return True 
         # up-right sudoku
         if(x>8 and y<9):
-           if( y>6 and x>14):
+          if ( y>5 and x>14):
             for i in range(12, 21):
               if board[y][i] == n:
                 return False
             for i in range (0,6):
-             if (board[i][x-3] or board[6][x]or board[7][x] or board[8][x]   )  == n:
+             if board[i][x-3] or board[6][x]or board[7][x] or board[8][x]     == n:
                   return False
             x0 = (x//3)*3
             y0 = (y//3)*3
@@ -190,15 +190,15 @@ class App:
                     if board[y0+i][x0+j] == n:
                       return False
                  return True 
-           elif (x>11 and x<=14 and y>5):
+          #joint square
+          elif (x>11 and x<15 and y>5):
             for i in range(6, 21):
               
               if board[y][i] == n:
                 return False
      
             for i in range(0, 6):
-             print(board[i][x])
-             if (board[i][x-3] or board[6][x] or board[7][x] or board[8][x]or board[9][x-6] or board[10][x-6] or board[11][x-6] or board[12][x] or board[13][x] or board[14][x])== n:
+             if board[i][x-3] or board[9][x-6] or board[10][x-6] or board[11][x-6] or board[12][x] or board[13][x] or board[14][x]== n:
                  return False
           
             x0 = (x//3)*3
@@ -209,13 +209,13 @@ class App:
                 if board[y0+i][x0+j] == n:
                     return False
              return True 
-           else: 
+          else: 
              for i in range(9, 18):
               if board[y][i] == n:
                 return False
              for i in range(0, 6):
                 print(board[i][x])
-                if (board[i][x] or board[6][x+3]or board[7][x+3] or board[8][x+3])   == n:
+                if board[i][x] or board[6][x+3]or board[7][x+3] or board[8][x+3]   == n:
                   return False
           
              x0 = (x//3)*3
@@ -229,11 +229,45 @@ class App:
                  return True 
         #down-right sudoku  
         if(x>8 and y>11):
-          if y<15:
+          if y<15 and x>14:
             for i in range(12, 21):
               print(board[y][i])
               if board[y][i] == n:
                 return False
+            for i in range(15, 21):
+         
+               print(board[i][x])
+               if board[i][x-3]   == n:
+                 return False
+          
+            x0 = (x//3)*3
+            y0 = (y//3)*3
+     
+            for i in range(0, 3):
+              for j in range(0, 3):
+              #  print(board[y0+i][x0+j])
+                if board[y0+i][x0+j] == n:
+                    return False
+              return True
+           #joint square
+          elif (x>11 and x<15 and y<15):
+            for i in range(6, 21):
+              
+              if board[y][i] == n:
+                return False
+     
+            for i in range(15, 21):
+             if board[i][x-3] or board[6][x] or board[7][x] or board[8][x]or board[9][x-6] or board[10][x-6] or board[11][x-6] == n:
+                 return False
+          
+            x0 = (x//3)*3
+            y0 = (y//3)*3
+            for i in range(0, 3):
+             for j in range(0, 3):
+              #  print(board[y0+i][x0+j])
+                if board[y0+i][x0+j] == n:
+                    return False
+                return True 
           else:
             for i in range(9, 18):
               print(board[y][i])
@@ -242,7 +276,7 @@ class App:
           for i in range(15, 21):
          
             print(board[i][x])
-            if (board[i][x] or board[12][x+3]or board[13][x+3] or board[14][x+3])   == n:
+            if board[i][x] or board[12][x+3]or board[13][x+3] or board[14][x+3]   == n:
                 return False
           
           x0 = (x//3)*3
@@ -265,7 +299,7 @@ class App:
      
             for i in range(12, 21):
              print(board[i][x])
-             if (board[i][x] or board[9][x-6] or board[10][x-6] or board[11][x-6] or board[16][x] or board[7][x] or board[8][x])== n:
+             if board[i][x] or board[9][x-6] or board[10][x-6] or board[11][x-6] or board[16][x] or board[7][x] or board[8][x]== n:
                 return False
           
             x0 = (x//3)*3
@@ -297,5 +331,5 @@ class App:
                 if board[y0+i][x0+j] == n:
                     return False
            return True 
-       
-    print(checkNumber(12,7,str(9)))
+      
+    print(checkNumber(12,12,str(9)))
