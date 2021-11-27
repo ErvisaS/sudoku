@@ -1,6 +1,6 @@
 Width= 800
 Height=800
-
+Red=(255,0,0)
 WHITE=(255,255,255)
 Black =(0,0,0)
 LightBlue=(96,216,232)
@@ -21,3 +21,4 @@ board = f.read().split('\n')
 gridPos=(20,40,380,400,200,310,220,290)
 cellSize= 30
 gridSize=cellSize*21
+finished= False
