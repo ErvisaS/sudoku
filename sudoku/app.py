@@ -1,19 +1,14 @@
 import pygame
 from settings import *
-
-
 import threading
 import time
 import sys
+
 sys.setrecursionlimit(2000)
-global M
-global window,font
-window = pygame.display.set_mode((800, 800))
-M = [[-1 for x in range(21)] for y in range(21)]
 
 threadLock = threading.RLock()
 Matrix = [[-1 for x in range(21)] for y in range(21)]
-
+M = [[-1 for x in range(21)] for y in range(21)]
 for yidx, row in enumerate(board):
     for xidx, num in enumerate(row):
         if num == '*':
@@ -103,6 +98,206 @@ def findNextEmpty5():
             if Matrix[r][c] == 0:
                 return r, c
     return None, None
+
+
+class App:
+    def __init__(self):
+        pygame.init()
+        self.window = pygame.display.set_mode((800, 800))
+        self.running = True
+        self.grid = board
+        self.selected = None
+        self.mousePos = None
+        self.font = pygame.font.SysFont("arial", cellSize//2)
+
+    def run(self):
+        while self.running:
+            self.events()
+            self.update()
+            self.draw()
+
+        pygame.quit()
+        SystemExit()
+
+    def events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.running = False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                selected = self.mouseOnGrid()
+                if selected:
+                    print(self.mouseOnGrid())
+                    self.selected = selected
+                else:
+                    print("not on board")
+                    self.selected = None
+
+    def update(self):
+        self.mousePos = pygame.mouse.get_pos()
+
+    def draw(self):
+        self.window.fill(WHITE)
+        if self.selected:
+            self.drawSelection(self.window, self.selected)
+        self.drawNumbers(self.window)
+        self.drawNumbersMatrix(self.window)
+        self.drawGrid(self.window)
+        pygame.display.update()
+    def drawNumbersMatrix(self,window):
+         for yidx, row in enumerate(M):
+            for xidx, num in enumerate(row):
+                if yidx <= 8 and xidx <= 8:
+                    if num !=( 0 or -1):
+                        pos = [(xidx*cellSize)+gridPos[0],
+                               (yidx*cellSize)+gridPos[1]]
+                        self.textToScreenMatrix( self.window,str(num), pos)
+                if xidx >= 9 and yidx >= 6 and yidx <= 8:
+                    if num != (0 or -1):
+                        pos = [(xidx*cellSize)+gridPos[0],
+                               (yidx*cellSize)+gridPos[1]]
+                        self.textToScreenMatrix(self.window, str(num), pos)
+                if xidx >= 9 and xidx <= 11 and yidx >= 12 and yidx <= 14:
+                    if num !=( 0 or -1):
+                        pos = [(xidx*cellSize)+gridPos[0],
+                               (yidx*cellSize)+gridPos[1]]
+                        self.textToScreenMatrix(self.window,str(num), pos)
+                if yidx >= 9 and yidx <= 11 and xidx <= 8:
+                    if num != (0 or -1):
+                        pos = [(xidx*cellSize)+gridPos[0]+180,
+                               (yidx*cellSize)+gridPos[1]]
+                        self.textToScreenMatrix(self.window, str(num), pos)
+                if yidx <= 5 and xidx > 8:
+                    if num != (0 or -1):
+                        pos = [(xidx*cellSize)+gridPos[0]+90,
+                               (yidx*cellSize)+gridPos[1]]
+                        self.textToScreenMatrix( self.window,str(num), pos)
+                if yidx >= 12 and yidx <= 14 and xidx > 11:
+                    if num != (0 or -1):
+                        pos = [(xidx*cellSize)+gridPos[0],
+                               (yidx*cellSize)+gridPos[1]]
+                        self.textToScreenMatrix(self.window,str(num), pos)
+                if yidx > 14 and xidx > 8:
+                    if num !=( 0 or -1):
+                        pos= [(xidx*cellSize)+gridPos[0]+90,
+                               (yidx*cellSize)+gridPos[1]]
+                        self.textToScreenMatrix(self.window, str(num), pos)
+                if yidx >= 12 and xidx <= 8:
+                    if num !=( 0 or -1):
+                        pos = [(xidx*cellSize)+gridPos[0],
+                               (yidx*cellSize)+gridPos[1]]
+                        self.textToScreenMatrix(self.window, str(num), pos)
+    def drawNumbers(self, window):
+        for yidx, row in enumerate(self.grid):
+            for xidx, num in enumerate(row):
+                if yidx <= 8 and xidx <= 8:
+                    if num != "*":
+                        pos = [(xidx*cellSize)+gridPos[0],
+                               (yidx*cellSize)+gridPos[1]]
+                        self.textToScreen(window, str(num), pos)
+                if xidx >= 9 and yidx >= 6 and yidx <= 8:
+                    if num != "*":
+                        pos = [(xidx*cellSize)+gridPos[0],
+                               (yidx*cellSize)+gridPos[1]]
+                        self.textToScreen(window, str(num), pos)
+                if xidx >= 9 and xidx <= 11 and yidx >= 12 and yidx <= 14:
+                    if num != "*":
+                        pos = [(xidx*cellSize)+gridPos[0],
+                               (yidx*cellSize)+gridPos[1]]
+                        self.textToScreen(window, str(num), pos)
+                if yidx >= 9 and yidx <= 11 and xidx <= 8:
+                    if num != "*":
+                        pos = [(xidx*cellSize)+gridPos[0]+180,
+                               (yidx*cellSize)+gridPos[1]]
+                        self.textToScreen(window, str(num), pos)
+                if yidx <= 5 and xidx > 8:
+                    if num != "*":
+                        pos = [(xidx*cellSize)+gridPos[0]+90,
+                               (yidx*cellSize)+gridPos[1]]
+                        self.textToScreen(window, str(num), pos)
+                if yidx >= 12 and yidx <= 14 and xidx > 11:
+                    if num != "*":
+                        pos = [(xidx*cellSize)+gridPos[0],
+                               (yidx*cellSize)+gridPos[1]]
+                        self.textToScreen(window, str(num), pos)
+                if yidx > 14 and xidx > 8:
+                    if num != "*":
+                        pos = [(xidx*cellSize)+gridPos[0]+90,
+                               (yidx*cellSize)+gridPos[1]]
+                        self.textToScreen(window, str(num), pos)
+                if yidx >= 12 and xidx <= 8:
+                    if num != "*":
+                        pos = [(xidx*cellSize)+gridPos[0],
+                               (yidx*cellSize)+gridPos[1]]
+                        self.textToScreen(window, str(num), pos)
+
+    def drawSelection(self, window, pos):
+        pygame.draw.rect(window, LightBlue, ((
+            pos[0]*cellSize)+gridPos[0], (pos[1]*cellSize)+gridPos[1], cellSize, cellSize))
+
+    def drawGrid(self, window):
+        pygame.draw.rect(window, Black, (gridPos[0], gridPos[1], 630, 630), 2)
+        for x in range(10):
+            pygame.draw.line(window, Black, (gridPos[0]+(x*cellSize), gridPos[1]), (gridPos[0]+(
+                x*cellSize), gridPos[1]+270), 2 if x % 3 == 0 else 1)
+            pygame.draw.line(window, Black, (gridPos[0], gridPos[1]+(
+                x*cellSize)), (gridPos[0]+270, gridPos[1]+(x*cellSize)), 2 if x % 3 == 0 else 1)
+        for x in range(12, 22):
+            pygame.draw.line(window, Black, (gridPos[0]+(x*cellSize), gridPos[1]), (gridPos[0]+(
+                x*cellSize), gridPos[1]+270), 2 if x % 3 == 0 else 1)
+        for x in range(10):
+            pygame.draw.line(window, Black, (gridPos[2], gridPos[1]+(
+                x*cellSize)), (gridPos[2]+270, gridPos[1]+(x*cellSize)), 2 if x % 3 == 0 else 1)
+        for x in range(10):
+            pygame.draw.line(window, Black, (gridPos[0]+(x*cellSize), gridPos[3]), (gridPos[0]+(
+                x*cellSize), gridPos[3]+270), 2 if x % 3 == 0 else 1)
+            pygame.draw.line(window, Black, (gridPos[0], gridPos[3]+(
+                x*cellSize)), (gridPos[0]+270, gridPos[3]+(x*cellSize)), 2 if x % 3 == 0 else 1)
+        for x in range(12, 22):
+            pygame.draw.line(window, Black, (gridPos[0]+(x*cellSize), gridPos[3]), (gridPos[0]+(
+                x*cellSize), gridPos[3]+270), 2 if x % 3 == 0 else 1)
+        for x in range(10):
+            pygame.draw.line(window, Black, (gridPos[2], gridPos[3]+(
+                x*cellSize)), (gridPos[2]+270, gridPos[3]+(x*cellSize)), 2 if x % 3 == 0 else 1)
+        for x in range(6, 16):
+            pygame.draw.line(window, Black, (gridPos[0]+(x*cellSize), gridPos[5]), (gridPos[0]+(
+                x*cellSize), gridPos[5]+90), 2 if x % 3 == 0 else 1)
+        for x in range(4):
+            pygame.draw.line(window, Black, (gridPos[4], gridPos[5]+(
+                x*cellSize)), (gridPos[4]+270, gridPos[5]+(x*cellSize)), 2 if x % 3 == 0 else 1)
+        for x in range(9, 12):
+            pygame.draw.line(window, Black, (gridPos[0]+(x*cellSize), gridPos[6]), (gridPos[0]+(
+                x*cellSize), gridPos[6]+90), 2 if x % 3 == 0 else 1)
+        for x in range(3):
+            pygame.draw.line(window, Black, (gridPos[7], gridPos[6]+(
+                x*cellSize)), (gridPos[7]+90, gridPos[6]+(x*cellSize)), 2 if x % 3 == 0 else 1)
+        for x in range(9, 12):
+            pygame.draw.line(window, Black, (gridPos[0]+(x*cellSize), gridPos[3]), (gridPos[0]+(
+                x*cellSize), gridPos[3]+90), 2 if x % 3 == 0 else 1)
+        for x in range(4):
+            pygame.draw.line(window, Black, (gridPos[7], gridPos[3]+(
+                x*cellSize)), (gridPos[7]+90, gridPos[3]+(x*cellSize)), 2 if x % 3 == 0 else 1)
+
+    def mouseOnGrid(self):
+        if self.mousePos[0] < gridPos[0] or self.mousePos[1] < gridPos[1]:
+            return False
+        if self.mousePos[0] > gridPos[0]+gridSize or self.mousePos[1] > gridPos[1]+gridSize:
+            return False
+        return((self.mousePos[0]-gridPos[0])//cellSize, (self.mousePos[1]-gridPos[1])//cellSize)
+
+    def textToScreen(self, window, text, pos):
+        font = self.font.render(text, False, Black)
+        fontWidth = font.get_width()
+        fontHeight = font.get_height()
+        pos[0] += (cellSize-fontWidth)//2
+        pos[1] += (cellSize-fontHeight)//2
+        window.blit(font, pos)
+    def textToScreenMatrix(self,window, text, pos):
+        font = self.font.render(text, False, Red)
+        fontWidth = font.get_width()
+        fontHeight = font.get_height()
+        pos[0] += (cellSize-fontWidth)//2
+        pos[1] += (cellSize-fontHeight)//2
+        window.blit(font, pos)
 
 def checkNumberCenter(x, y, n):
     # upleft
@@ -407,7 +602,7 @@ def checkNumber(x, y, n):
 
         # joint square
         if (x > 11 and x < 15 and y < 15):
-            for i in range(9, 21):
+            for i in range(6, 21):
                 if Matrix[y][i] == n:
                     return False
 
@@ -468,7 +663,7 @@ def checkNumber(x, y, n):
     if(x < 9 and y > 11):
         # joint square
         if (x > 5 and y < 15):
-            for i in range(0, 12):
+            for i in range(0, 15):
                 # print(Matrix[y][i])
                 if Matrix[y][i] == n:
                     return False
@@ -509,52 +704,41 @@ def checkNumber(x, y, n):
                         return False
             return True
     #print(checkNumber(8, 10, str(8)))
+
+# up left sudoku
+
+
 def solve1():
-    global Matrix
-    global M
+    global Matrix,M
     row, col = findNextEmpty1()
- 
     if row is None:
         return True
     if (row and col) > 5 and (row and col) < 9:
+     
         for n in range(1, 10):
             if checkNumber(col, row, n):
-                with threadLock:
-                    
+             with threadLock:
                     Matrix[row][col] = n
                     if solve1():
-                       M[row][col] = n  
-                       App().drawNumbersMatrix()
-                       pygame.display.update()
-                       pygame.time.delay(500)
-                       
-                       return True
+                        M[row][col] = n
+                        return True
                     Matrix[row][col] = 0
-                  
         return False
     else:
         for n in range(1, 10):
             if checkNumber(col, row, n):
                 Matrix[row][col] = n
                 if solve1():
-                    
-                    M[row][col] = n 
-                   
-                    App().drawNumbersMatrix()
-                    pygame.display.update()
-                    pygame.time.delay(250)
+                    M[row][col] = n
                     return True
                 Matrix[row][col] = 0
-              
-                
-                
         return False
-    
+
 # up right sudoku
 
+
 def solve2():
-    global Matrix
-    
+    global Matrix,M
     row, col = findNextEmpty2()
     if row is None:
         return True
@@ -564,34 +748,26 @@ def solve2():
                 with threadLock:
                     Matrix[row][col] = n
                     if solve2():
-                     M[row][col] = n 
-                    
-                     App().drawNumbersMatrix()
-                     pygame.display.update()
-                     pygame.time.delay(500)
-                     return True
+                        print( Matrix[row][col])
+                        M[row][col] = n
+                        return True
                     Matrix[row][col] = 0
-                    
         return False
     else:
         for n in range(1, 10):
             if checkNumber(col, row, n):
                 Matrix[row][col] = n
                 if solve2():
-                    M[row][col] = n 
-                    
-                    App().drawNumbersMatrix()
-                    pygame.display.update()
-                    pygame.time.delay(500)
+                    M[row][col] = n
+                    print( Matrix[row][col])
                     return True
                 Matrix[row][col] = 0
-               
         return False
 # center sudoku
 
 
 def solve3():
-    global Matrix
+    global Matrix,M
     row, col = findNextEmpty3()
     if row is None:
         print("LLLLLLLLLLLLLLLLLLLL")
@@ -599,73 +775,64 @@ def solve3():
     if (row and col) > 5 and (row and col) < 9:
         for n in range(1, 10):
             if checkNumberCenter(col, row, n):
-                print("AAAAAAAAAA")
+                
                 with threadLock:
                     Matrix[row][col] = n
                     if solve3():
+                        print("AAAAAAAAAA")
                         M[row][col] = n
-                         
-                        App().drawNumbersMatrix()
-                        pygame.display.update()
-                        pygame.time.delay(500)  
+                        print( Matrix[row][col])
                         return True
                     Matrix[row][col] = 0
         return False
     elif row > 5 and row < 9 and col > 11 and col < 15:
         for n in range(1, 10):
             if checkNumberCenter(col, row, n):
-                print("BBBBBBBBBB")
+               
                 with threadLock:
                     Matrix[row][col] = n
                     if solve3():
-                        
-                       M[row][col] = n  
-                       App().drawNumbersMatrix()
-                       pygame.display.update()
-                       pygame.time.delay(500) 
-                       return True
-                         
+                        M[row][col] = n
+                        print("BBBBBBBBBB")
+                        print( Matrix[row][col])
+                        return True
                     Matrix[row][col] = 0
         return False
     elif row > 11 and row < 15 and col > 5 and col < 9:
         for n in range(1, 10):
             if checkNumberCenter(col, row, n):
-                print("CCCCCCCCCC")
+                
                 with threadLock:
                     Matrix[row][col] = n
                     if solve3():
-                       M[row][col] = n 
-                          
-                       App().drawNumbersMatrix()
-                       pygame.display.update()
-                       pygame.time.delay(500) 
-                       return True
+                        M[row][col] = n
+                        print("CCCCCCCCCC")
+                        print( Matrix[row][col])
+                        return True
                     Matrix[row][col] = 0
         return False
     elif row > 11 and row < 15 and col > 11 and col < 15:
         for n in range(1, 10):
             if checkNumberCenter(col, row, n):
-                print("DDDDDDDD")
+                
                 with threadLock:
                     Matrix[row][col] = n
                     if solve3():
-                       M[row][col] = n  
-                       App().drawNumbersMatrix()
-                       pygame.display.update()
-                       pygame.time.delay(500)
-                       return True
+                        M[row][col] = n
+                        print("DDDDDDDD")
+                        print( Matrix[row][col])
+                        return True
                     Matrix[row][col] = 0
         return False
     else:
         for n in range(1, 10):
             if checkNumberCenter(col, row, n):
-                print("XXXXXXXXXXXX")
+                
                 Matrix[row][col] = n
                 if solve3():
-                    M[row][col] = n  
-                    App().drawNumbersMatrix()
-                    pygame.display.update()
-                    pygame.time.delay(500)
+                    M[row][col] = n
+                    print("XXXXXXXXXXXX")
+                    print( Matrix[row][col])
                     return True
                 Matrix[row][col] = 0
         return False
@@ -673,7 +840,7 @@ def solve3():
 
 # down left sudoku
 def solve4():
-    global Matrix
+    global Matrix,M
     row, col = findNextEmpty4()
     if row is None:
         return True
@@ -683,12 +850,9 @@ def solve4():
                 with threadLock:
                     Matrix[row][col] = n
                     if solve4():
-                       M[row][col] = n 
-                      
-                       App().drawNumbersMatrix()
-                       pygame.display.update()
-                       pygame.time.delay(500) 
-                       return True
+                        M[row][col] = n
+                        print( Matrix[row][col])
+                        return True
                     Matrix[row][col] = 0
         return False
     else:
@@ -696,11 +860,8 @@ def solve4():
             if checkNumber(col, row, n):
                 Matrix[row][col] = n
                 if solve4():
-                    M[row][col] = n  
-                    App().drawNumbersMatrix()
-                    pygame.display.update()
-                    pygame.time.delay(500)
-                      
+                    M[row][col] = n
+                    print( Matrix[row][col])
                     return True
                 Matrix[row][col] = 0
         return False
@@ -708,7 +869,7 @@ def solve4():
 
 
 def solve5():
-    global Matrix
+    global Matrix,M
     row, col = findNextEmpty5()
     if row is None:
         return True
@@ -718,10 +879,8 @@ def solve5():
                 with threadLock:
                     Matrix[row][col] = n
                     if solve5():
-                        M[row][col] = n  
-                        App().drawNumbersMatrix()
-                        pygame.display.update()
-                        pygame.time.delay(500)
+                        M[row][col] = n
+                        print( Matrix[row][col])
                         return True
                     Matrix[row][col] = 0
         return False
@@ -730,280 +889,36 @@ def solve5():
             if checkNumber(col, row, n):
                 Matrix[row][col] = n
                 if solve5():
-                    M[row][col] = n  
-                    App().drawNumbersMatrix()
-                    pygame.display.update()
-                    pygame.time.delay(500)
+                    M[row][col] = n
+                    print( Matrix[row][col])
                     return True
                 Matrix[row][col] = 0
         return False
 
 
-class App:
- 
-
-  
-   
- def __init__(self):
-    self.running = True
-    
-    self.grid=board
-    pygame.init()
-      
-       
-    window.fill(WHITE)
-        #self.selected = None
-        #self.mousePos = None
-    self.font = pygame.font.SysFont("arial", 15)
-    self.drawGrid(window)
-    pygame.display.update()
-    self.drawNumbers()
-    pygame.display.update()
-    self.events()
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            self.running = False
-    solve1()
-    solve2()
-    solve3()
-    solve4()
-    solve5()    
-   
- def run(self):
-     
-        
-            self.events()
-            self.update()
-            self.draw()
-           
-        
-
- def events(self):
-        
-       for event in pygame.event.get():
-               
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                selected = self.mouseOnGrid()
-                if selected:
-                    print(self.mouseOnGrid())
-                    self.selected = selected
-                else:
-                    print("not on board")
-                    self.selected = None
-
- def update(self):
-        self.mousePos = pygame.mouse.get_pos()
-        self.drawNumbersMatrix(self.window)
- def draw(self):
-      
-        '''if self.selected:
-            self.drawSelection(self.window, self.selected)'''
-        self.drawNumbers(self.window)
-       
-        self.drawGrid(self.window)
-        
-        pygame.display.update()
- def drawNumbersMatrix(self):
-         for yidx, row in enumerate(M):
-            for xidx, num in enumerate(row):
-                if yidx <= 8 and xidx <= 8:
-                    if num !=( 0 or -1):
-                        pos = [(xidx*cellSize)+gridPos[0],
-                               (yidx*cellSize)+gridPos[1]]
-                        self.textToScreenMatrix( str(num), pos)
-                if xidx >= 9 and yidx >= 6 and yidx <= 8:
-                    if num != (0 or -1):
-                        pos = [(xidx*cellSize)+gridPos[0],
-                               (yidx*cellSize)+gridPos[1]]
-                        self.textToScreenMatrix( str(num), pos)
-                if xidx >= 9 and xidx <= 11 and yidx >= 12 and yidx <= 14:
-                    if num !=( 0 or -1):
-                        pos = [(xidx*cellSize)+gridPos[0],
-                               (yidx*cellSize)+gridPos[1]]
-                        self.textToScreenMatrix(str(num), pos)
-                if yidx >= 9 and yidx <= 11 and xidx <= 8:
-                    if num != (0 or -1):
-                        pos = [(xidx*cellSize)+gridPos[0]+180,
-                               (yidx*cellSize)+gridPos[1]]
-                        self.textToScreenMatrix( str(num), pos)
-                if yidx <= 5 and xidx > 8:
-                    if num != (0 or -1):
-                        pos = [(xidx*cellSize)+gridPos[0]+90,
-                               (yidx*cellSize)+gridPos[1]]
-                        self.textToScreenMatrix( str(num), pos)
-                if yidx >= 12 and yidx <= 14 and xidx > 11:
-                    if num != (0 or -1):
-                        pos = [(xidx*cellSize)+gridPos[0],
-                               (yidx*cellSize)+gridPos[1]]
-                        self.textToScreenMatrix(str(num), pos)
-                if yidx > 14 and xidx > 8:
-                    if num !=( 0 or -1):
-                        pos= [(xidx*cellSize)+gridPos[0]+90,
-                               (yidx*cellSize)+gridPos[1]]
-                        self.textToScreenMatrix( str(num), pos)
-                if yidx >= 12 and xidx <= 8:
-                    if num !=( 0 or -1):
-                        pos = [(xidx*cellSize)+gridPos[0],
-                               (yidx*cellSize)+gridPos[1]]
-                        self.textToScreenMatrix( str(num), pos)
-
- def drawNumbers(self):
-        for yidx, row in enumerate(self.grid):
-            for xidx, num in enumerate(row):
-                if yidx <= 8 and xidx <= 8:
-                    if num != "*":
-                        pos = [(xidx*cellSize)+gridPos[0],
-                               (yidx*cellSize)+gridPos[1]]
-                        self.textToScreen( str(num), pos)
-                if xidx >= 9 and yidx >= 6 and yidx <= 8:
-                    if num != "*":
-                        pos = [(xidx*cellSize)+gridPos[0],
-                               (yidx*cellSize)+gridPos[1]]
-                        self.textToScreen( str(num), pos)
-                if xidx >= 9 and xidx <= 11 and yidx >= 12 and yidx <= 14:
-                    if num != "*":
-                        pos = [(xidx*cellSize)+gridPos[0],
-                               (yidx*cellSize)+gridPos[1]]
-                        self.textToScreen(str(num), pos)
-                if yidx >= 9 and yidx <= 11 and xidx <= 8:
-                    if num != "*":
-                        pos = [(xidx*cellSize)+gridPos[0]+180,
-                               (yidx*cellSize)+gridPos[1]]
-                        self.textToScreen( str(num), pos)
-                if yidx <= 5 and xidx > 8:
-                    if num != "*":
-                        pos = [(xidx*cellSize)+gridPos[0]+90,
-                               (yidx*cellSize)+gridPos[1]]
-                        self.textToScreen( str(num), pos)
-                if yidx >= 12 and yidx <= 14 and xidx > 11:
-                    if num != "*":
-                        pos = [(xidx*cellSize)+gridPos[0],
-                               (yidx*cellSize)+gridPos[1]]
-                        self.textToScreen(str(num), pos)
-                if yidx > 14 and xidx > 8:
-                    if num != "*":
-                        pos = [(xidx*cellSize)+gridPos[0]+90,
-                               (yidx*cellSize)+gridPos[1]]
-                        self.textToScreen( str(num), pos)
-                if yidx >= 12 and xidx <= 8:
-                    if num != "*":
-                        pos = [(xidx*cellSize)+gridPos[0],
-                               (yidx*cellSize)+gridPos[1]]
-                        self.textToScreen( str(num), pos)
-
- def drawSelection(self, window, pos):
-        pygame.draw.rect(window, LightBlue, ((
-            pos[0]*cellSize)+gridPos[0], (pos[1]*cellSize)+gridPos[1], cellSize, cellSize))
-
- def drawGrid(self, window):
-        pygame.draw.rect(window, Black, (gridPos[0], gridPos[1], 630, 630), 2)
-        for x in range(10):
-            pygame.draw.line(window, Black, (gridPos[0]+(x*cellSize), gridPos[1]), (gridPos[0]+(
-                x*cellSize), gridPos[1]+270), 2 if x % 3 == 0 else 1)
-            pygame.draw.line(window, Black, (gridPos[0], gridPos[1]+(
-                x*cellSize)), (gridPos[0]+270, gridPos[1]+(x*cellSize)), 2 if x % 3 == 0 else 1)
-        for x in range(12, 22):
-            pygame.draw.line(window, Black, (gridPos[0]+(x*cellSize), gridPos[1]), (gridPos[0]+(
-                x*cellSize), gridPos[1]+270), 2 if x % 3 == 0 else 1)
-        for x in range(10):
-            pygame.draw.line(window, Black, (gridPos[2], gridPos[1]+(
-                x*cellSize)), (gridPos[2]+270, gridPos[1]+(x*cellSize)), 2 if x % 3 == 0 else 1)
-        for x in range(10):
-            pygame.draw.line(window, Black, (gridPos[0]+(x*cellSize), gridPos[3]), (gridPos[0]+(
-                x*cellSize), gridPos[3]+270), 2 if x % 3 == 0 else 1)
-            pygame.draw.line(window, Black, (gridPos[0], gridPos[3]+(
-                x*cellSize)), (gridPos[0]+270, gridPos[3]+(x*cellSize)), 2 if x % 3 == 0 else 1)
-        for x in range(12, 22):
-            pygame.draw.line(window, Black, (gridPos[0]+(x*cellSize), gridPos[3]), (gridPos[0]+(
-                x*cellSize), gridPos[3]+270), 2 if x % 3 == 0 else 1)
-        for x in range(10):
-            pygame.draw.line(window, Black, (gridPos[2], gridPos[3]+(
-                x*cellSize)), (gridPos[2]+270, gridPos[3]+(x*cellSize)), 2 if x % 3 == 0 else 1)
-        for x in range(6, 16):
-            pygame.draw.line(window, Black, (gridPos[0]+(x*cellSize), gridPos[5]), (gridPos[0]+(
-                x*cellSize), gridPos[5]+90), 2 if x % 3 == 0 else 1)
-        for x in range(4):
-            pygame.draw.line(window, Black, (gridPos[4], gridPos[5]+(
-                x*cellSize)), (gridPos[4]+270, gridPos[5]+(x*cellSize)), 2 if x % 3 == 0 else 1)
-        for x in range(9, 12):
-            pygame.draw.line(window, Black, (gridPos[0]+(x*cellSize), gridPos[6]), (gridPos[0]+(
-                x*cellSize), gridPos[6]+90), 2 if x % 3 == 0 else 1)
-        for x in range(3):
-            pygame.draw.line(window, Black, (gridPos[7], gridPos[6]+(
-                x*cellSize)), (gridPos[7]+90, gridPos[6]+(x*cellSize)), 2 if x % 3 == 0 else 1)
-        for x in range(9, 12):
-            pygame.draw.line(window, Black, (gridPos[0]+(x*cellSize), gridPos[3]), (gridPos[0]+(
-                x*cellSize), gridPos[3]+90), 2 if x % 3 == 0 else 1)
-        for x in range(4):
-            pygame.draw.line(window, Black, (gridPos[7], gridPos[3]+(
-                x*cellSize)), (gridPos[7]+90, gridPos[3]+(x*cellSize)), 2 if x % 3 == 0 else 1)
-
- def mouseOnGrid(self):
-        if self.mousePos[0] < gridPos[0] or self.mousePos[1] < gridPos[1]:
-            return False
-        if self.mousePos[0] > gridPos[0]+gridSize or self.mousePos[1] > gridPos[1]+gridSize:
-            return False
-        return((self.mousePos[0]-gridPos[0])//cellSize, (self.mousePos[1]-gridPos[1])//cellSize)
-
- def textToScreen(self, text, pos):
-        font = self.font.render(text, False, Black)
-        fontWidth = font.get_width()
-        fontHeight = font.get_height()
-        pos[0] += (cellSize-fontWidth)//2
-        pos[1] += (cellSize-fontHeight)//2
-        window.blit(font, pos)
- def textToScreenMatrix(self, text, pos):
-        font = self.font.render(text, False, Red)
-        fontWidth = font.get_width()
-        fontHeight = font.get_height()
-        pos[0] += (cellSize-fontWidth)//2
-        pos[1] += (cellSize-fontHeight)//2
-        window.blit(font, pos)
-
-App().__init__()
-
-
-
-# up left sudoku
-solved=0
-
-
 t1 = threading.Thread(target=solve1)
-t2 = threading.Thread(target=solve2)
-t3 = threading.Thread(target=solve3)
-t4 = threading.Thread(target=solve4)
-t5 = threading.Thread(target=solve5)
-
-       
-
-
-
 t1.start()
-t2.start()
-t3.start()
-t4.start()
-t5.start()
-
-
 t1.join()
+t2 = threading.Thread(target=solve2)
+t2.start()
 t2.join()
+t3 = threading.Thread(target=solve3)
+t3.start()
 t3.join()
+t4 = threading.Thread(target=solve4)
+t4.start()
 t4.join()
+t5 = threading.Thread(target=solve5)
+t5.start()
 t5.join()
-print(Matrix)
-print("AAAAAAAAA")
-        
-
- 
-
-
-
-
+"""solve1()
+solve2()
+solve3()
+solve4()
+solve5()"""
 
 # print(Matrix[8][6])
 # print(sys.getrecursionlimit())
 # time.sleep(3)
-
- 
- 
-
+print(Matrix)
+print("AAAAAAAAA")
