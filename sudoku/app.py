@@ -3,8 +3,9 @@ from settings import *
 import threading
 import time
 import sys
+import numpy as np
 
-sys.setrecursionlimit(2000)
+sys.setrecursionlimit(1000)
 
 threadLock = threading.RLock()
 Matrix = [[-1 for x in range(21)] for y in range(21)]
@@ -37,10 +38,12 @@ for yidx, row in enumerate(board):
 
 def findNextEmpty1():
     global Matrix
+    
+  
     for r in range(9):
-        for c in range(9):
-            if Matrix[r][c] == 0:
-                return r, c
+     for c in range(9):
+        if Matrix[r][c] == 0:
+            return r, c
     return None, None
 # up right sudoku
 
@@ -61,14 +64,15 @@ def findNextEmpty2():
 
 def findNextEmpty3():
     global Matrix
+    for r in range(9, 12):
+        for c in range(0,9):
+            if Matrix[r][c] == 0:
+                return r, c
     for r in range(6, 9):
         for c in range(6, 15):
             if Matrix[r][c] == 0:
                 return r, c
-    for r in range(9, 12):
-        for c in range(9):
-            if Matrix[r][c] == 0:
-                return r, c
+    
     for r in range(12, 15):
         for c in range(6, 15):
             if Matrix[r][c] == 0:
@@ -79,6 +83,7 @@ def findNextEmpty3():
 
 def findNextEmpty4():
     global Matrix
+    
     for r in range(12, 21):
         for c in range(9):
             if Matrix[r][c] == 0:
@@ -706,29 +711,39 @@ def checkNumber(x, y, n):
     #print(checkNumber(8, 10, str(8)))
 
 # up left sudoku
+def write(result):
+ res=np.matrix(result)
+ with open("C:/Users/Ervisa/Desktop/sudoku/sudoku/solve.txt", "a") as f:
 
-
+     for line in res:
+       np.savetxt(f,line,fmt='%s')
+mat=['t','row','col','value']
+write(mat)
 def solve1():
     global Matrix,M
     row, col = findNextEmpty1()
     if row is None:
         return True
     if (row and col) > 5 and (row and col) < 9:
-     
-        for n in range(1, 10):
+  
+         for n in range(1, 10):
             if checkNumber(col, row, n):
-             with threadLock:
+             
                     Matrix[row][col] = n
                     if solve1():
+                        res=['t1',row,col,n]
+                        write(res)
                         M[row][col] = n
                         return True
                     Matrix[row][col] = 0
-        return False
+         return False
     else:
         for n in range(1, 10):
             if checkNumber(col, row, n):
                 Matrix[row][col] = n
                 if solve1():
+                    res=['t1',row,col,n]
+                    write(res)
                     M[row][col] = n
                     return True
                 Matrix[row][col] = 0
@@ -743,11 +758,14 @@ def solve2():
     if row is None:
         return True
     if row > 5 and row < 9 and col > 11 and col < 15:
+   
         for n in range(1, 10):
             if checkNumber(col, row, n):
-                with threadLock:
+               
                     Matrix[row][col] = n
                     if solve2():
+                        res=['t2',row,col,n]
+                        write(res)
                         print( Matrix[row][col])
                         M[row][col] = n
                         return True
@@ -758,6 +776,8 @@ def solve2():
             if checkNumber(col, row, n):
                 Matrix[row][col] = n
                 if solve2():
+                    res=['t2',row,col,n]
+                    write(res)
                     M[row][col] = n
                     print( Matrix[row][col])
                     return True
@@ -772,13 +792,16 @@ def solve3():
     if row is None:
         print("LLLLLLLLLLLLLLLLLLLL")
         return True
-    if (row and col) > 5 and (row and col) < 9:
+    if 5<row<9   and 5< col < 9:
+      
         for n in range(1, 10):
             if checkNumberCenter(col, row, n):
                 
-                with threadLock:
+                
                     Matrix[row][col] = n
                     if solve3():
+                        res=['t3',row,col,n]
+                        write(res)
                         print("AAAAAAAAAA")
                         M[row][col] = n
                         print( Matrix[row][col])
@@ -786,12 +809,15 @@ def solve3():
                     Matrix[row][col] = 0
         return False
     elif row > 5 and row < 9 and col > 11 and col < 15:
+      
         for n in range(1, 10):
             if checkNumberCenter(col, row, n):
                
-                with threadLock:
+                
                     Matrix[row][col] = n
                     if solve3():
+                        res=['t3',row,col,n]
+                        write(res)
                         M[row][col] = n
                         print("BBBBBBBBBB")
                         print( Matrix[row][col])
@@ -799,12 +825,15 @@ def solve3():
                     Matrix[row][col] = 0
         return False
     elif row > 11 and row < 15 and col > 5 and col < 9:
+    
         for n in range(1, 10):
             if checkNumberCenter(col, row, n):
                 
-                with threadLock:
+               
                     Matrix[row][col] = n
                     if solve3():
+                        res=['t3',row,col,n]
+                        write(res)
                         M[row][col] = n
                         print("CCCCCCCCCC")
                         print( Matrix[row][col])
@@ -812,12 +841,15 @@ def solve3():
                     Matrix[row][col] = 0
         return False
     elif row > 11 and row < 15 and col > 11 and col < 15:
+     
         for n in range(1, 10):
             if checkNumberCenter(col, row, n):
                 
-                with threadLock:
+               
                     Matrix[row][col] = n
                     if solve3():
+                        res=['t3',row,col,n]
+                        write(res)
                         M[row][col] = n
                         print("DDDDDDDD")
                         print( Matrix[row][col])
@@ -830,6 +862,8 @@ def solve3():
                 
                 Matrix[row][col] = n
                 if solve3():
+                    res=['t3',row,col,n]
+                    write(res)
                     M[row][col] = n
                     print("XXXXXXXXXXXX")
                     print( Matrix[row][col])
@@ -845,21 +879,26 @@ def solve4():
     if row is None:
         return True
     if row > 11 and row < 15 and col > 5 and col < 9:
-        for n in range(1, 10):
+        
+         for n in range(1, 10):
             if checkNumber(col, row, n):
-                with threadLock:
+               
                     Matrix[row][col] = n
                     if solve4():
+                        res=['t4',row,col,n]
+                        write(res)
                         M[row][col] = n
                         print( Matrix[row][col])
                         return True
                     Matrix[row][col] = 0
-        return False
+         return False
     else:
         for n in range(1, 10):
             if checkNumber(col, row, n):
                 Matrix[row][col] = n
                 if solve4():
+                    res=['t4',row,col,n]
+                    write(res)
                     M[row][col] = n
                     print( Matrix[row][col])
                     return True
@@ -869,16 +908,20 @@ def solve4():
 
 
 def solve5():
-    global Matrix,M
+    global Matrix,M,k
     row, col = findNextEmpty5()
     if row is None:
         return True
     if row > 11 and row < 15 and col > 11 and col < 15:
+      
         for n in range(1, 10):
             if checkNumber(col, row, n):
-                with threadLock:
+            
                     Matrix[row][col] = n
                     if solve5():
+                   
+                        res=['t5',row,col,n]
+                        write(res)
                         M[row][col] = n
                         print( Matrix[row][col])
                         return True
@@ -889,6 +932,9 @@ def solve5():
             if checkNumber(col, row, n):
                 Matrix[row][col] = n
                 if solve5():
+                
+                    res=['t5',row,col,n]
+                    write(res)
                     M[row][col] = n
                     print( Matrix[row][col])
                     return True
@@ -897,19 +943,19 @@ def solve5():
 
 
 t1 = threading.Thread(target=solve1)
-t1.start()
-t1.join()
 t2 = threading.Thread(target=solve2)
-t2.start()
-t2.join()
 t3 = threading.Thread(target=solve3)
-t3.start()
-t3.join()
 t4 = threading.Thread(target=solve4)
-t4.start()
-t4.join()
 t5 = threading.Thread(target=solve5)
+t1.start()
+t2.start()
+t3.start()
+t4.start()
 t5.start()
+t1.join()
+t2.join()
+t3.join()
+t4.join()
 t5.join()
 """solve1()
 solve2()
