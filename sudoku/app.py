@@ -4,8 +4,83 @@ import threading
 import time
 import sys
 import numpy as np
+import time
+from matplotlib import pyplot as plt
+start_time = time.time()
+sys.setrecursionlimit(2000)
+"""
+ys = [0]
+def solvedBox():
+    counter = 0
+    counter1 = 0
+    for r in range(9):
+        for c in range(9):
+            if Matrix[r][c] != 0 and Matrix[r][c] != -1:
+                counter +=1
+    #upright
+    for r in range(6):
+        for c in range(9, 18):
+            if Matrix[r][c] != 0 and Matrix[r][c] != -1:
+                counter +=1
+    for r in range(6, 9):
+        for c in range(12, 21):
+            if Matrix[r][c] != 0 and Matrix[r][c] != -1:
+                counter +=1
+    #center
+    for r in range(9,12):
+        for c in range(9):
+            if Matrix[r][c] != 0 and Matrix[r][c] != -1:
+                counter +=1
+    for r in range(6, 9):
+        for c in range(6, 15):
+            if Matrix[r][c] != 0 and Matrix[r][c] != -1:
+                counter +=1
+    for r in range(12, 15):
+        for c in range(6, 15):
+            if Matrix[r][c] != 0 and Matrix[r][c] != -1:
+                counter +=1
+    #downleft
+    for r in range(12,21):
+        for c in range(9):
+            if Matrix[r][c] != 0 and Matrix[r][c] != -1:
+                counter +=1
+    #downright
+    for r in range(12,15):
+        for c in range(12,21):
+            if Matrix[r][c] != 0 and Matrix[r][c] != -1:
+                counter +=1
+    for r in range(15,21):
+        for c in range(9,18):
+            if Matrix[r][c] != 0 and Matrix[r][c] != -1:
+                counter +=1
+    global ys
+    counter1 +=1
+    ys.append(counter)
+    return counter
 
-sys.setrecursionlimit(1000)
+
+
+class setInterval :
+    def __init__(self,interval,action) :
+        self.interval=interval
+        self.action=action
+        self.stopEvent=threading.Event()
+        thread=threading.Thread(target=self.__setInterval)
+        thread.start()
+
+    def __setInterval(self) :
+        nextTime=time.time()+self.interval
+        while not self.stopEvent.wait(nextTime-time.time()) :
+            nextTime+=self.interval
+            self.action()
+
+    def cancel(self) :
+        self.stopEvent.set()
+
+inter=setInterval(0.05,solvedBox)
+t=threading.Timer(0.5,inter.cancel)
+t.start()
+"""
 
 threadLock = threading.RLock()
 Matrix = [[-1 for x in range(21)] for y in range(21)]
@@ -33,29 +108,42 @@ for yidx, row in enumerate(board):
                 Matrix[yidx][xidx] = 8
             if num == '9':
                 Matrix[yidx][xidx] = 9
+
+
+
 # up left sudoku
 
 
 def findNextEmpty1():
     global Matrix
-    
-  
-    for r in range(9):
-     for c in range(9):
-        if Matrix[r][c] == 0:
-            return r, c
+    for r in range(5,9):
+        for c in range(5,9):
+            if Matrix[r][c] == 0:
+                return r, c
+    for r in range(5,9):
+        for c in range(0,5):
+            if Matrix[r][c] == 0:
+                return r, c
+    for r in range(0,5):
+        for c in range(9):
+            if Matrix[r][c] == 0:
+                return r, c
     return None, None
 # up right sudoku
 
 
 def findNextEmpty2():
     global Matrix
-    for r in range(6):
-        for c in range(9, 18):
+    for r in range(6, 9):
+        for c in range(12, 15):
             if Matrix[r][c] == 0:
                 return r, c
     for r in range(6, 9):
-        for c in range(12, 21):
+        for c in range(15, 21):
+            if Matrix[r][c] == 0:
+                return r, c
+    for r in range(6):
+        for c in range(9, 18):
             if Matrix[r][c] == 0:
                 return r, c
     return None, None
@@ -64,27 +152,51 @@ def findNextEmpty2():
 
 def findNextEmpty3():
     global Matrix
+    
+    for r in range(12, 15):
+        for c in range(6, 9):
+            if Matrix[r][c] == 0:
+                return r, c
+    for r in range(12, 15):
+        for c in range(12, 15):
+            if Matrix[r][c] == 0:
+                return r, c
+    for r in range(6, 9):
+        for c in range(12,15):
+            if Matrix[r][c] == 0:
+                return r, c
+    for r in range(12, 15):
+        for c in range(9, 12):
+            if Matrix[r][c] == 0:
+                return r, c
     for r in range(9, 12):
         for c in range(0,9):
             if Matrix[r][c] == 0:
                 return r, c
     for r in range(6, 9):
-        for c in range(6, 15):
+        for c in range(9,12):
+            if Matrix[r][c] == 0:
+                return r, c
+    for r in range(6, 9):
+        for c in range(6,9):
             if Matrix[r][c] == 0:
                 return r, c
     
-    for r in range(12, 15):
-        for c in range(6, 15):
-            if Matrix[r][c] == 0:
-                return r, c
     return None, None
 # down left sudoku
 
 
 def findNextEmpty4():
     global Matrix
-    
-    for r in range(12, 21):
+    for r in range(12, 15):
+        for c in range(6,9):
+            if Matrix[r][c] == 0:
+                return r, c
+    for r in range(12, 15):
+        for c in range(6):
+            if Matrix[r][c] == 0:
+                return r, c
+    for r in range(15, 21):
         for c in range(9):
             if Matrix[r][c] == 0:
                 return r, c
@@ -95,7 +207,11 @@ def findNextEmpty4():
 def findNextEmpty5():
     global Matrix
     for r in range(12, 15):
-        for c in range(12, 21):
+        for c in range(12, 15):
+            if Matrix[r][c] == 0:
+                return r, c
+    for r in range(12, 15):
+        for c in range(15,21):
             if Matrix[r][c] == 0:
                 return r, c
     for r in range(15, 21):
@@ -549,6 +665,7 @@ def checkNumber(x, y, n):
             return True
     # up-right sudoku
     if(x > 8 and y < 9):
+        # joint square
         if (x > 11 and x < 15 and y > 5):
             for i in range(6, 21):
 
@@ -567,7 +684,7 @@ def checkNumber(x, y, n):
                     if Matrix[y0+i][x0+j] == n:
                         return False
             return True
-        # joint square
+        
         elif (y > 5 and x > 14):
             for i in range(12, 21):
                 if Matrix[y][i] == n:
@@ -766,7 +883,7 @@ def solve2():
                     if solve2():
                         res=['t2',row,col,n]
                         write(res)
-                        print( Matrix[row][col])
+                        #print( Matrix[row][col])
                         M[row][col] = n
                         return True
                     Matrix[row][col] = 0
@@ -779,7 +896,7 @@ def solve2():
                     res=['t2',row,col,n]
                     write(res)
                     M[row][col] = n
-                    print( Matrix[row][col])
+                    #print( Matrix[row][col])
                     return True
                 Matrix[row][col] = 0
         return False
@@ -790,7 +907,7 @@ def solve3():
     global Matrix,M
     row, col = findNextEmpty3()
     if row is None:
-        print("LLLLLLLLLLLLLLLLLLLL")
+        #print("LLLLLLLLLLLLLLLLLLLL")
         return True
     if 5<row<9   and 5< col < 9:
       
@@ -802,9 +919,9 @@ def solve3():
                     if solve3():
                         res=['t3',row,col,n]
                         write(res)
-                        print("AAAAAAAAAA")
+                        #print("AAAAAAAAAA")
                         M[row][col] = n
-                        print( Matrix[row][col])
+                        #print( Matrix[row][col])
                         return True
                     Matrix[row][col] = 0
         return False
@@ -819,8 +936,8 @@ def solve3():
                         res=['t3',row,col,n]
                         write(res)
                         M[row][col] = n
-                        print("BBBBBBBBBB")
-                        print( Matrix[row][col])
+                        #print("BBBBBBBBBB")
+                        #print( Matrix[row][col])
                         return True
                     Matrix[row][col] = 0
         return False
@@ -835,8 +952,8 @@ def solve3():
                         res=['t3',row,col,n]
                         write(res)
                         M[row][col] = n
-                        print("CCCCCCCCCC")
-                        print( Matrix[row][col])
+                        #print("CCCCCCCCCC")
+                        #print( Matrix[row][col])
                         return True
                     Matrix[row][col] = 0
         return False
@@ -851,8 +968,8 @@ def solve3():
                         res=['t3',row,col,n]
                         write(res)
                         M[row][col] = n
-                        print("DDDDDDDD")
-                        print( Matrix[row][col])
+                        #print("DDDDDDDD")
+                        #print( Matrix[row][col])
                         return True
                     Matrix[row][col] = 0
         return False
@@ -865,8 +982,8 @@ def solve3():
                     res=['t3',row,col,n]
                     write(res)
                     M[row][col] = n
-                    print("XXXXXXXXXXXX")
-                    print( Matrix[row][col])
+                    #print("XXXXXXXXXXXX")
+                    #print( Matrix[row][col])
                     return True
                 Matrix[row][col] = 0
         return False
@@ -888,7 +1005,7 @@ def solve4():
                         res=['t4',row,col,n]
                         write(res)
                         M[row][col] = n
-                        print( Matrix[row][col])
+                        #print( Matrix[row][col])
                         return True
                     Matrix[row][col] = 0
          return False
@@ -900,13 +1017,13 @@ def solve4():
                     res=['t4',row,col,n]
                     write(res)
                     M[row][col] = n
-                    print( Matrix[row][col])
+                    #print( Matrix[row][col])
                     return True
                 Matrix[row][col] = 0
         return False
 # down right sudoku
 
-
+k=0
 def solve5():
     global Matrix,M,k
     row, col = findNextEmpty5()
@@ -919,11 +1036,11 @@ def solve5():
             
                     Matrix[row][col] = n
                     if solve5():
-                   
+                        k+=1
                         res=['t5',row,col,n]
                         write(res)
                         M[row][col] = n
-                        print( Matrix[row][col])
+                        #print( Matrix[row][col])
                         return True
                     Matrix[row][col] = 0
         return False
@@ -932,11 +1049,11 @@ def solve5():
             if checkNumber(col, row, n):
                 Matrix[row][col] = n
                 if solve5():
-                
+                    k+=1
                     res=['t5',row,col,n]
                     write(res)
                     M[row][col] = n
-                    print( Matrix[row][col])
+                    #print( Matrix[row][col])
                     return True
                 Matrix[row][col] = 0
         return False
@@ -944,27 +1061,148 @@ def solve5():
 
 t1 = threading.Thread(target=solve1)
 t2 = threading.Thread(target=solve2)
-t3 = threading.Thread(target=solve3)
 t4 = threading.Thread(target=solve4)
 t5 = threading.Thread(target=solve5)
+t3 = threading.Thread(target=solve3)
 t1.start()
 t2.start()
-t3.start()
 t4.start()
 t5.start()
+t3.start()
 t1.join()
 t2.join()
-t3.join()
 t4.join()
 t5.join()
+t3.join()
+
+"""
+t1 = threading.Thread(target=solve1)
+t11 = threading.Thread(target=solve1)
+t2 = threading.Thread(target=solve2)
+t22 = threading.Thread(target=solve2)
+t4 = threading.Thread(target=solve4)
+t44 = threading.Thread(target=solve4)
+t5 = threading.Thread(target=solve5)
+t55 = threading.Thread(target=solve5)
+t3 = threading.Thread(target=solve3)
+t33 = threading.Thread(target=solve3)
+
+
+t1.start()
+t11.start()
+t2.start()
+t22.start()
+t4.start()
+t44.start()
+t5.start()
+t55.start()
+t3.start()
+t33.start()
+t1.join()
+t11.join()
+t2.join()
+t22.join()
+t4.join()
+t44.join()
+t5.join()
+t55.join()
+t3.join()
+t3.join()"""
+
 """solve1()
 solve2()
 solve3()
 solve4()
 solve5()"""
+"""flag1 = False
+flag2 = False
+flag3 = False
+flag4 = False
+flag5 = False
+#upleft
+for r in range(9):
+    for c in range(9):
+        if Matrix[r][c] == 0:
+            flag1 = True
+#upright
+for r in range(6):
+    for c in range(9, 18):
+        if Matrix[r][c] == 0:
+            flag2 = True
+for r in range(6, 9):
+    for c in range(12, 21):
+        if Matrix[r][c] == 0:
+            flag2 = True
+#center
+for r in range(9,12):
+    for c in range(9):
+        if Matrix[r][c] == 0:
+            flag3 = True
+for r in range(6, 9):
+    for c in range(6, 15):
+        if Matrix[r][c] == 0:
+            flag3 = True
+for r in range(12, 15):
+    for c in range(6, 15):
+        if Matrix[r][c] == 0:
+            flag3 = True
+#downleft
+for r in range(12,21):
+    for c in range(9):
+        if Matrix[r][c] == 0:
+            flag4 = True
+#downright
+for r in range(12,15):
+    for c in range(12,21):
+        if Matrix[r][c] == 0:
+            flag5 = True
+for r in range(15,21):
+    for c in range(9,18):
+        if Matrix[r][c] == 0:
+            flag5 = True
+if flag1:
+    print("flag1")
+    solve1()
+if flag2:
+    print("flag2")
+    solve2()
+if flag3:
+    print("flag3")
+    solve3()
+if flag4:
+    print("flag4")
+    solve4()
+if flag5:
+    print("flag5")
+    solve5()
+ """ 
+
 
 # print(Matrix[8][6])
 # print(sys.getrecursionlimit())
 # time.sleep(3)
 print(Matrix)
 print("AAAAAAAAA")
+"""tm=time.time() - start_time
+print("--- %s seconds ---" % (time.time() - start_time))
+t.join()
+xs=[0,tm]
+contr=solvedBox()
+ys.append(contr)
+for i in range(len(ys)-2):
+    if(i==0):
+        xs.insert(i+1,0.05)
+    else:
+        xs.insert(i+1,(i/20)-0.05)"""
+xs = [0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3]
+ys = [0, 228, 244, 258, 369, 405, 405]
+
+xs1 = [0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3]
+ys1 = [0, 145, 235, 287, 369, 405, 405] 
+plt.plot(xs,ys,'k',label='5_threads')
+plt.plot(xs1,ys1,'b',label='10_threads')
+plt.title('Multithreads_Graph')
+plt.xlabel('time(seconds)')
+plt.ylabel('task_number')
+plt.legend()
+plt.show()
